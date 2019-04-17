@@ -54,6 +54,7 @@ public class KRunFrontEnd extends FrontEnd {
     private final Provider<Function<org.kframework.definition.Module, Rewriter>> initializeRewriter;
     private final Provider<ExecutionMode> executionMode;
     private final TTYInfo tty;
+    private final AdditionalParsingCoordinator parseCoordinator;
 
     @Inject
     KRunFrontEnd(
@@ -69,7 +70,8 @@ public class KRunFrontEnd extends FrontEnd {
             @Main Provider<CompiledDefinition> compiledDef,
             @Main Provider<Function<org.kframework.definition.Module, Rewriter>> initializeRewriter,
             @Main Provider<ExecutionMode> executionMode,
-            TTYInfo tty) {
+            TTYInfo tty,
+            AdditionalParsingCoordinator parseCoordinator) {
         super(kem, options, usage, experimentalUsage, jarInfo, files);
         this.scope = scope;
         this.kompiledDir = kompiledDir;
@@ -80,6 +82,7 @@ public class KRunFrontEnd extends FrontEnd {
         this.initializeRewriter = initializeRewriter;
         this.executionMode = executionMode;
         this.tty = tty;
+        this.parseCoordinator = parseCoordinator;
     }
 
     /**
@@ -92,12 +95,14 @@ public class KRunFrontEnd extends FrontEnd {
                 new KRun(kem, files, tty.stdin).run(compiledDef.get(),
                         krunOptions,
                         initializeRewriter.get(),
-                        executionMode.get());
+                        executionMode.get(),
+                        parseCoordinator);
             }
             return new KRun(kem, files, tty.stdin).run(compiledDef.get(),
                     krunOptions,
                     initializeRewriter.get(),
-                    executionMode.get());
+                    executionMode.get(),
+                    parseCoordinator);
         } finally {
             scope.exit();
         }

@@ -67,12 +67,28 @@ public class KRun {
         this.ttyStdin = ttyStdin;
     }
 
-    public int run(CompiledDefinition compiledDef, KRunOptions options, Function<Module, Rewriter> rewriterGenerator, ExecutionMode executionMode) {
+    private class FileParser implements AdditionalParsingCoordinator.Provider {
+        private Function<String, String> parserFromModuleName;
+
+        public FileParser(Function<String, String> parserFromModuleName) {
+            this.parserFromModuleName = parserFromModuleName;
+        }
+
+        public K apply(String filePath, String module, Sort startSymbol) {
+            Source source = Source.apply("<parameters>");
+            return externalParse(parserFromModuleName.apply(module), filePath, startSymbol, source, null);
+        }
+    }
+
+    public int run(CompiledDefinition compiledDef, KRunOptions options, Function<Module, Rewriter> rewriterGenerator, ExecutionMode executionMode, AdditionalParsingCoordinator parseCoordinator) {
         String pgmFileName = options.configurationCreation.pgm();
         K program;
+        FileParser fileParser = null;
         if (options.configurationCreation.term()) {
-            program = externalParse(options.configurationCreation.parser(compiledDef.executionModule().name()),
-                    pgmFileName, compiledDef.programStartSymbol, Source.apply("<parameters>"), compiledDef);
+            fileParser = new FileParser(options.configurationCreation::parser);
+            parseCoordinator.setProvider(fileParser);
+            program = fileParser.apply(pgmFileName,
+                    compiledDef.executionModule().name(), compiledDef.programStartSymbol);
         } else {
             program = parseConfigVars(options, compiledDef);
         }
