@@ -8,6 +8,8 @@ import org.kframework.backend.java.kil.KLabelConstant;
 import org.kframework.backend.java.kil.KList;
 import org.kframework.backend.java.kil.Term;
 import org.kframework.backend.java.kil.TermContext;
+import org.kframework.kore.K;
+import org.kframework.kore.ADT.Sort;
 import org.kframework.krun.AdditionalParsingCoordinator;
 import org.kframework.krun.RunProcess;
 import org.kframework.krun.RunProcess.ProcessOutput;
@@ -24,12 +26,15 @@ import java.util.Map;
  */
 public class BuiltinIOOperations {
 
+    private final AdditionalParsingCoordinator parser;
     private final FileSystem fs;
 
     @Inject
     public BuiltinIOOperations(
-            FileSystem fs) {
+            FileSystem fs,
+            AdditionalParsingCoordinator parser) {
         this.fs = fs;
+        this.parser = parser;
     }
 
     public Term getTime(TermContext termContext) {
@@ -110,6 +115,8 @@ public class BuiltinIOOperations {
     }
 
     public Term parseInModule(StringToken input, StringToken startSymbol, StringToken moduleName, TermContext termContext) {
+        K program = parser.parse(input.stringValue(), moduleName.stringValue(), new Sort(startSymbol.stringValue()));
+        // TODO: Convert program to a Term for return
         throw new RuntimeException("Not implemented!");
     }
 
