@@ -1,4 +1,4 @@
-package org.kframework.backend.java.builtins;
+package org.kframework.krun;
 
 import org.kframework.kore.K;
 import org.kframework.kore.Sort;

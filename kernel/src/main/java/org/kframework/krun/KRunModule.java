@@ -48,6 +48,7 @@ public class KRunModule extends AbstractModule {
     protected void configure() {
         bind(FrontEnd.class).to(KRunFrontEnd.class);
         bind(Tool.class).toInstance(Tool.KRUN);
+        bind(AdditionalParsingCoordinator.class).toInstance(new AdditionalParsingCoordinator());
 
         Multibinder<Object> optionsBinder = Multibinder.newSetBinder(binder(), Object.class, Options.class);
         optionsBinder.addBinding().to(KRunOptions.class);
