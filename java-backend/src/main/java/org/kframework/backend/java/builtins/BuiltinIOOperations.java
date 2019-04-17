@@ -2,6 +2,7 @@
 package org.kframework.backend.java.builtins;
 
 import com.google.inject.Inject;
+import org.kframework.backend.java.compile.KOREtoBackendKIL;
 import org.kframework.backend.java.kil.BuiltinList;
 import org.kframework.backend.java.kil.KItem;
 import org.kframework.backend.java.kil.KLabelConstant;
@@ -115,9 +116,9 @@ public class BuiltinIOOperations {
     }
 
     public Term parseInModule(StringToken input, StringToken startSymbol, StringToken moduleName, TermContext termContext) {
-        K program = parser.parse(input.stringValue(), moduleName.stringValue(), new Sort(startSymbol.stringValue()));
-        // TODO: Convert program to a Term for return
-        throw new RuntimeException("Not implemented!");
+        K parsedContent = parser.parse(input.stringValue(), moduleName.stringValue(), new Sort(startSymbol.stringValue()));
+        KOREtoBackendKIL converter = new KOREtoBackendKIL(null, termContext.definition(), termContext.global(), false);
+        return converter.convert(parsedContent);
     }
 
     public Term system(StringToken term, TermContext termContext) {
