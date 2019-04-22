@@ -83,10 +83,9 @@ public class KRun {
     public int run(CompiledDefinition compiledDef, KRunOptions options, Function<Module, Rewriter> rewriterGenerator, ExecutionMode executionMode, AdditionalParsingCoordinator parseCoordinator) {
         String pgmFileName = options.configurationCreation.pgm();
         K program;
-        FileParser fileParser = null;
+        FileParser fileParser = new FileParser(options.configurationCreation::parser);
+        parseCoordinator.setProvider(fileParser);
         if (options.configurationCreation.term()) {
-            fileParser = new FileParser(options.configurationCreation::parser);
-            parseCoordinator.setProvider(fileParser);
             program = fileParser.apply(pgmFileName,
                     compiledDef.executionModule().name(), compiledDef.programStartSymbol);
         } else {
